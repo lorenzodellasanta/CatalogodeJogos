@@ -15,6 +15,14 @@ typedef struct {
 } reg;
 
 // -------------------------
+// LIMPAR BUFFER
+// -------------------------
+void limparBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+// -------------------------
 // TAMANHO DO ARQUIVO
 // -------------------------
 int tamanho(FILE *arq) {
@@ -31,7 +39,7 @@ void inserir(FILE *arq) {
     jogo.status = 'A';
 
     printf("\n=== Cadastrar Jogo ===\n");
-    getchar(); // limpar buffer
+    limparBuffer();
 
     printf("Nome: ");
     fgets(jogo.nome, 30, stdin);
@@ -63,6 +71,7 @@ void inserir(FILE *arq) {
 void consultarCatalogo(FILE *arq) {
     reg jogo;
     int tam = tamanho(arq);
+    int i;
 
     if (tam == 0) {
         printf("\nNenhum jogo cadastrado.\n");
@@ -73,7 +82,7 @@ void consultarCatalogo(FILE *arq) {
 
     fseek(arq, 0, SEEK_SET);
 
-    for (int i = 0; i < tam; i++) {
+    for(i = 0; i < tam; i++) {
         fread(&jogo, sizeof(reg), 1, arq);
 
         if (jogo.status != 'A')
@@ -96,8 +105,7 @@ void consultarJogo(FILE *arq) {
     char nomeBusca[30];
     int encontrado = 0;
 
-    getchar(); // limpar buffer
-
+    limparBuffer();
     printf("\nDigite o nome do jogo: ");
     fgets(nomeBusca, 30, stdin);
     nomeBusca[strcspn(nomeBusca, "\n")] = '\0';
@@ -146,7 +154,7 @@ void atualizar(FILE *arq) {
         return;
     }
 
-    getchar(); // limpar buffer
+    limparBuffer();
 
     printf("\nNovo nome: ");
     fgets(jogo.nome, 30, stdin);
@@ -209,10 +217,10 @@ void excluir(FILE *arq) {
 // MAIN
 // -------------------------
 int main() {
-    FILE *arq = fopen("catalogo.dat", "rb+");
+    FILE *arq = fopen("c:\\Ling_C\\catalogo.dat", "rb+");
 
     if (arq == NULL) {
-        arq = fopen("catalogo.dat", "wb+");
+        arq = fopen("c:\\Ling_C\\catalogo.dat", "wb+");
         if (arq == NULL) {
             printf("Erro ao criar o arquivo!");
             return 1;
