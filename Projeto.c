@@ -232,15 +232,14 @@ void exportarTxt(FILE *arq) {
     int count = 0;
 
     while (fread(&jogo, sizeof(reg), 1, arq) == 1) {
-        if (jogo.status == 'A') {
             fprintf(txt, "Nome: %s\n",       jogo.nome);
             fprintf(txt, "Genero: %s\n",     jogo.genero);
             fprintf(txt, "Plataforma: %s\n", jogo.plataforma);
             fprintf(txt, "Preco: %.2f\n",    jogo.preco);
             fprintf(txt, "Ano: %d\n",        jogo.ano);
+            fprintf(txt, "Status: %c\n", 		 jogo.status);
             fprintf(txt, "-----------------------------\n");
             count++;
-        }
     }
 
     fclose(txt);
