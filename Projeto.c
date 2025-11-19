@@ -1,7 +1,6 @@
-#include <iostream>
-#include <cstdio>
-#include <cstring>
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // -------------------------
 // STRUCT DO REGISTRO
@@ -10,13 +9,13 @@ typedef struct {
     char nome[30];
     char genero[20];
     char plataforma[20];
-    char status;    // 'A' = ativo, 'X' = excluído
+    char status;    // 'A' ativo, 'X' excluído
     float preco;
     int ano;
 } reg;
 
 // -------------------------
-// FUNÇÃO: devolve quantidade de registros
+// TAMANHO DO ARQUIVO
 // -------------------------
 int tamanho(FILE *arq) {
     fseek(arq, 0, SEEK_END);
@@ -25,125 +24,117 @@ int tamanho(FILE *arq) {
 }
 
 // -------------------------
-// INSERIR
+// INSERIR REGISTRO
 // -------------------------
 void inserir(FILE *arq) {
-
     reg jogo;
-    jogo.status = 'A'; // ativo
+    jogo.status = 'A';
 
-    cout << "\n=== Cadastrar Jogo ===\n";
+    printf("\n=== Cadastrar Jogo ===\n");
+    getchar(); // limpar buffer
 
-    cin.ignore(1000, '\n');
-
-    cout << "Nome: ";
+    printf("Nome: ");
     fgets(jogo.nome, 30, stdin);
     jogo.nome[strcspn(jogo.nome, "\n")] = '\0';
 
-    cout << "Genero: ";
+    printf("Genero: ");
     fgets(jogo.genero, 20, stdin);
     jogo.genero[strcspn(jogo.genero, "\n")] = '\0';
 
-    cout << "Plataforma: ";
+    printf("Plataforma: ");
     fgets(jogo.plataforma, 20, stdin);
     jogo.plataforma[strcspn(jogo.plataforma, "\n")] = '\0';
 
-    cout << "Preco: ";
-    cin >> jogo.preco;
+    printf("Preco: ");
+    scanf("%f", &jogo.preco);
 
-    cout << "Ano: ";
-    cin >> jogo.ano;
+    printf("Ano: ");
+    scanf("%d", &jogo.ano);
 
-    // grava no final do arquivo
     fseek(arq, 0, SEEK_END);
     fwrite(&jogo, sizeof(reg), 1, arq);
 
-    cout << "\nJogo cadastrado com sucesso!\n";
+    printf("\nJogo cadastrado com sucesso!\n");
 }
 
 // -------------------------
 // CONSULTAR CATALOGO
 // -------------------------
 void consultarCatalogo(FILE *arq) {
-
     reg jogo;
     int tam = tamanho(arq);
 
     if (tam == 0) {
-        cout << "\nNenhum jogo cadastrado!\n";
+        printf("\nNenhum jogo cadastrado.\n");
         return;
     }
 
-    cout << "\n=== Catalogo de Jogos ===\n";
+    printf("\n=== Catalogo de Jogos ===\n");
 
     fseek(arq, 0, SEEK_SET);
 
     for (int i = 0; i < tam; i++) {
         fread(&jogo, sizeof(reg), 1, arq);
 
-        if (jogo.status != 'A') continue;
+        if (jogo.status != 'A')
+            continue;
 
-        cout << "\nRegistro #" << i + 1;
-        cout << "\nNome: " << jogo.nome;
-        cout << "\nGenero: " << jogo.genero;
-        cout << "\nPlataforma: " << jogo.plataforma;
-        cout << "\nPreco: " << jogo.preco;
-        cout << "\nAno: " << jogo.ano << "\n";
+        printf("\nRegistro #%d\n", i + 1);
+        printf("Nome: %s\n", jogo.nome);
+        printf("Genero: %s\n", jogo.genero);
+        printf("Plataforma: %s\n", jogo.plataforma);
+        printf("Preco: %.2f\n", jogo.preco);
+        printf("Ano: %d\n", jogo.ano);
     }
 }
 
 // -------------------------
-// CONSULTAR JOGO POR NOME
+// CONSULTAR POR NOME
 // -------------------------
 void consultarJogo(FILE *arq) {
-
-    cin.ignore(1000, '\n');
-
-    char nomeBusca[30];
     reg jogo;
-    bool encontrado = false;
+    char nomeBusca[30];
+    int encontrado = 0;
 
-    cout << "\nDigite o nome do jogo: ";
+    getchar(); // limpar buffer
+
+    printf("\nDigite o nome do jogo: ");
     fgets(nomeBusca, 30, stdin);
     nomeBusca[strcspn(nomeBusca, "\n")] = '\0';
 
     fseek(arq, 0, SEEK_SET);
 
     while (fread(&jogo, sizeof(reg), 1, arq) == 1) {
-
         if (jogo.status == 'A' && strcmp(jogo.nome, nomeBusca) == 0) {
-
-            cout << "\n=== Jogo encontrado ===\n";
-            cout << "Nome: " << jogo.nome << endl;
-            cout << "Genero: " << jogo.genero << endl;
-            cout << "Plataforma: " << jogo.plataforma << endl;
-            cout << "Preco: " << jogo.preco << endl;
-            cout << "Ano: " << jogo.ano << endl;
-
-            encontrado = true;
+            printf("\n=== Jogo encontrado ===\n");
+            printf("Nome: %s\n", jogo.nome);
+            printf("Genero: %s\n", jogo.genero);
+            printf("Plataforma: %s\n", jogo.plataforma);
+            printf("Preco: %.2f\n", jogo.preco);
+            printf("Ano: %d\n", jogo.ano);
+            encontrado = 1;
             break;
         }
     }
 
     if (!encontrado)
-        cout << "\nJogo nao encontrado!\n";
+        printf("\nJogo nao encontrado!\n");
 }
 
 // -------------------------
 // ATUALIZAR REGISTRO
 // -------------------------
 void atualizar(FILE *arq) {
-
     int id;
     reg jogo;
 
-    cout << "\nDigite o número do registro para atualizar: ";
-    cin >> id;
+    printf("\nDigite o número do registro que deseja atualizar: ");
+    scanf("%d", &id);
 
     int tam = tamanho(arq);
 
     if (id < 1 || id > tam) {
-        cout << "Registro invalido!\n";
+        printf("Registro invalido!\n");
         return;
     }
 
@@ -151,59 +142,58 @@ void atualizar(FILE *arq) {
     fread(&jogo, sizeof(reg), 1, arq);
 
     if (jogo.status != 'A') {
-        cout << "Registro excluido, não pode atualizar!";
+        printf("Registro excluído. Não é possível atualizar.\n");
         return;
     }
 
-    cin.ignore(1000, '\n');
+    getchar(); // limpar buffer
 
-    cout << "\nNovo nome: ";
+    printf("\nNovo nome: ");
     fgets(jogo.nome, 30, stdin);
     jogo.nome[strcspn(jogo.nome, "\n")] = '\0';
 
-    cout << "Novo genero: ";
+    printf("Novo genero: ");
     fgets(jogo.genero, 20, stdin);
     jogo.genero[strcspn(jogo.genero, "\n")] = '\0';
 
-    cout << "Nova plataforma: ";
+    printf("Nova plataforma: ");
     fgets(jogo.plataforma, 20, stdin);
     jogo.plataforma[strcspn(jogo.plataforma, "\n")] = '\0';
 
-    cout << "Novo preco: ";
-    cin >> jogo.preco;
+    printf("Novo preco: ");
+    scanf("%f", &jogo.preco);
 
-    cout << "Novo ano: ";
-    cin >> jogo.ano;
+    printf("Novo ano: ");
+    scanf("%d", &jogo.ano);
 
     fseek(arq, (id - 1) * sizeof(reg), SEEK_SET);
     fwrite(&jogo, sizeof(reg), 1, arq);
 
-    cout << "\nRegistro atualizado com sucesso!\n";
+    printf("\nRegistro atualizado com sucesso!\n");
 }
 
 // -------------------------
-// EXCLUIR (marcação lógica)
+// EXCLUSAO LOGICA
 // -------------------------
 void excluir(FILE *arq) {
-
     int id;
     reg jogo;
 
-    cout << "\nDigite o número do registro para excluir: ";
-    cin >> id;
+    printf("\nDigite o número do registro que deseja excluir: ");
+    scanf("%d", &id);
 
     int tam = tamanho(arq);
 
     if (id < 1 || id > tam) {
-        cout << "Registro invalido!\n";
+        printf("Registro invalido!\n");
         return;
     }
 
     fseek(arq, (id - 1) * sizeof(reg), SEEK_SET);
     fread(&jogo, sizeof(reg), 1, arq);
 
-    if (jogo.status != 'A') {
-        cout << "Registro ja esta excluido!";
+    if (jogo.status == 'X') {
+        printf("\nRegistro já está excluído!\n");
         return;
     }
 
@@ -212,72 +202,63 @@ void excluir(FILE *arq) {
     fseek(arq, (id - 1) * sizeof(reg), SEEK_SET);
     fwrite(&jogo, sizeof(reg), 1, arq);
 
-    cout << "\nRegistro excluido com sucesso!\n";
+    printf("\nRegistro excluído com sucesso!\n");
 }
 
 // -------------------------
 // MAIN
 // -------------------------
 int main() {
-
-    FILE *arq = fopen("c:\\Ling_C\\catalogo.dat", "rb+");
+    FILE *arq = fopen("catalogo.dat", "rb+");
 
     if (arq == NULL) {
-        arq = fopen("c:\\Ling_C\\catalogo.dat", "wb+");
+        arq = fopen("catalogo.dat", "wb+");
         if (arq == NULL) {
-            cout << "Falha ao abrir o arquivo!";
+            printf("Erro ao criar o arquivo!");
             return 1;
         }
     }
 
     int op;
-    do {
-        cout << "\n---------- Menu de opcoes ----------\n";
-        cout << "1. Consultar Catalogo\n";
-        cout << "2. Consultar Jogo\n";
-        cout << "3. Inserir jogo\n";
-        cout << "4. Atualizar jogo\n";
-        cout << "5. Excluir jogo\n";
-        cout << "6. Sair\n";
-        cout << "------------------------------------\n";
-        cout << "Itens: " << tamanho(arq) << "\n";
-        cout << "Digite a opcao: ";
 
-        cin >> op;
+    do {
+        printf("\n---------- Menu de opcoes ----------\n");
+        printf("1. Consultar Catalogo\n");
+        printf("2. Consultar Jogo\n");
+        printf("3. Inserir Jogo\n");
+        printf("4. Atualizar Jogo\n");
+        printf("5. Excluir Jogo\n");
+        printf("6. Sair\n");
+        printf("------------------------------------\n");
+        printf("Itens no arquivo: %d\n", tamanho(arq));
+        printf("Digite a opcao: ");
+        scanf("%d", &op);
 
         switch (op) {
-            case 1:
-                consultarCatalogo(arq);
-                break;
-
-            case 2:
-                consultarJogo(arq);
-                break;
-
-            case 3:
-                inserir(arq);
-                break;
-
-            case 4:
-                atualizar(arq);
-                break;
-
-            case 5:
-                excluir(arq);
-                break;
-
-            case 6:
-                cout << "Fechando...\n";
-                break;
-
-            default:
-                cout << "Opcao invalida!\n";
-                break;
+        case 1:
+            consultarCatalogo(arq);
+            break;
+        case 2:
+            consultarJogo(arq);
+            break;
+        case 3:
+            inserir(arq);
+            break;
+        case 4:
+            atualizar(arq);
+            break;
+        case 5:
+            excluir(arq);
+            break;
+        case 6:
+            printf("Fechando...\n");
+            break;
+        default:
+            printf("Opcao invalida!\n");
         }
 
     } while (op != 6);
 
     fclose(arq);
-
     return 0;
 }
