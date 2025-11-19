@@ -10,13 +10,13 @@ typedef struct {
     char nome[30];
     char genero[20];
     char plataforma[20];
-    char status;    // 'A' = ativo, 'X' = excluÌdo
+    char status;    // 'A' = ativo, 'X' = exclu√≠do
     float preco;
     int ano;
 } reg;
 
 // -------------------------
-// FUN«√O: devolve quantidade de registros
+// FUN√á√ÉO: devolve quantidade de registros
 // -------------------------
 int tamanho(FILE *arq) {
     fseek(arq, 0, SEEK_END);
@@ -137,7 +137,7 @@ void atualizar(FILE *arq) {
     int id;
     reg jogo;
 
-    cout << "\nDigite o n˙mero do registro para atualizar: ";
+    cout << "\nDigite o n√∫mero do registro para atualizar: ";
     cin >> id;
 
     int tam = tamanho(arq);
@@ -151,7 +151,7 @@ void atualizar(FILE *arq) {
     fread(&jogo, sizeof(reg), 1, arq);
 
     if (jogo.status != 'A') {
-        cout << "Registro excluido, n„o pode atualizar!";
+        cout << "Registro excluido, n√£o pode atualizar!";
         return;
     }
 
@@ -182,14 +182,14 @@ void atualizar(FILE *arq) {
 }
 
 // -------------------------
-// EXCLUIR (marcaÁ„o lÛgica)
+// EXCLUIR (marca√ß√£o l√≥gica)
 // -------------------------
 void excluir(FILE *arq) {
 
     int id;
     reg jogo;
 
-    cout << "\nDigite o n˙mero do registro para excluir: ";
+    cout << "\nDigite o n√∫mero do registro para excluir: ";
     cin >> id;
 
     int tam = tamanho(arq);
@@ -281,4 +281,3 @@ int main() {
 
     return 0;
 }
-
