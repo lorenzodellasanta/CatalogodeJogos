@@ -214,6 +214,41 @@ void excluir(FILE *arq) {
 }
 
 // -------------------------
+// GERA RELATORIO
+// -------------------------
+void exportarTxt(FILE *arq) {
+    FILE *txt = fopen("C:\\Ling_C\\catalogo.txt", "w");
+    reg jogo;
+
+    if (txt == NULL) {
+        printf("Erro ao criar catalogo.txt!\n");
+        return;
+    }
+
+    fseek(arq, 0, SEEK_SET);
+
+    fprintf(txt, "===== CATALOGO DE JOGOS =====\n\n");
+
+    int count = 0;
+
+    while (fread(&jogo, sizeof(reg), 1, arq) == 1) {
+        if (jogo.status == 'A') {
+            fprintf(txt, "Nome: %s\n",       jogo.nome);
+            fprintf(txt, "Genero: %s\n",     jogo.genero);
+            fprintf(txt, "Plataforma: %s\n", jogo.plataforma);
+            fprintf(txt, "Preco: %.2f\n",    jogo.preco);
+            fprintf(txt, "Ano: %d\n",        jogo.ano);
+            fprintf(txt, "-----------------------------\n");
+            count++;
+        }
+    }
+
+    fclose(txt);
+
+    printf("\nArquivo catalogo.txt criado com sucesso! (%d jogos exportados)\n", count);
+}
+
+// -------------------------
 // MAIN
 // -------------------------
 int main() {
@@ -236,7 +271,8 @@ int main() {
         printf("3. Inserir Jogo\n");
         printf("4. Atualizar Jogo\n");
         printf("5. Excluir Jogo\n");
-        printf("6. Sair\n");
+        printf("6. Exportar catálogo legivel\n");
+        printf("7. Sair\n");
         printf("------------------------------------\n");
         printf("Itens no arquivo: %d\n", tamanho(arq));
         printf("Digite a opcao: ");
@@ -258,14 +294,20 @@ int main() {
         case 5:
             excluir(arq);
             break;
+            
         case 6:
+    		exportarTxt(arq);
+    		break;
+
+        case 7:
             printf("Fechando...\n");
             break;
+            
         default:
             printf("Opcao invalida!\n");
         }
 
-    } while (op != 6);
+    } while (op != 7);
 
     fclose(arq);
     return 0;
